@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cpu-anomaly-cron
+  namespace: kube-system
+spec:
+  schedule: "*/1 * * * *"  # every 1 minute
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cpu-anomaly
+            image: aiops-cpu-monitor:latest
+            volumeMounts:
+            - name: kubeconfig
+              mountPath: /root/.kube
+          restartPolicy: OnFailure
+          volumes:
+          - name: kubeconfig
+            hostPath:
+              path: /home/leo/.kube
